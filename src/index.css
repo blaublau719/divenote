@@ -59,20 +59,11 @@ body,
   height: 100%;
 }
 
-html {
-  /* ROOT CAUSE FIX: the root element is otherwise transparent (= white), so any
-     edge iOS briefly leaves uncovered (home indicator, launch, keyboard) flashes
-     white. Paint it the app's base colour so such a gap blends in. */
-  background-color: var(--paper);
-}
-
 body {
   color: var(--ink);
   /* outside the phone frame (desktop): a soft, low-saturation misty backdrop */
   background:
     radial-gradient(130% 90% at 50% 0%, #d6e1d8 0%, #bccabf 55%, #a7b8ab 100%);
-  /* don't let the document rubber-band and reveal what's behind it */
-  overscroll-behavior: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,16 +80,11 @@ body {
   position: relative;
 }
 
-/* On a real phone (standalone PWA) fill the whole screen, no frame chrome.
-   Height comes from --app-height (JS-measured window.innerHeight), which iOS
-   reports correctly — unlike 100dvh, which it mis-measures at launch. 100dvh is
-   only the fallback before the script runs. */
+/* On a real phone (standalone PWA) fill the whole screen, no frame chrome. */
 @media (display-mode: standalone), (max-width: 440px) {
   .phone-frame {
     width: 100vw;
     height: 100dvh;
-    height: var(--app-height, 100dvh);
-    max-height: none;
     border-radius: 0;
     box-shadow: none;
   }
