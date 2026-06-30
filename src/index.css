@@ -59,11 +59,18 @@ body,
   height: 100%;
 }
 
+html {
+  /* match the backdrop so a transient viewport gap never flashes white */
+  background-color: #aebfb2;
+}
+
 body {
   color: var(--ink);
   /* outside the phone frame (desktop): a soft, low-saturation misty backdrop */
   background:
     radial-gradient(130% 90% at 50% 0%, #d6e1d8 0%, #bccabf 55%, #a7b8ab 100%);
+  background-color: #aebfb2;
+  overscroll-behavior: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,9 +89,17 @@ body {
 
 /* On a real phone (standalone PWA) fill the whole screen, no frame chrome. */
 @media (display-mode: standalone), (max-width: 440px) {
+  /* lock the page to the viewport so iOS can't rubber-band a white strip in,
+     and avoid the flaky 100dvh by sizing against the fixed body instead */
+  body {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
   .phone-frame {
-    width: 100vw;
-    height: 100dvh;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
     border-radius: 0;
     box-shadow: none;
   }
