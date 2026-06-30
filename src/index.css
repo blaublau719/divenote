@@ -89,11 +89,18 @@ body {
   position: relative;
 }
 
-/* On a real phone (standalone PWA) fill the whole screen, no frame chrome. */
+/* On a real phone (standalone PWA) fill the whole screen, no frame chrome.
+   Pin to the viewport edges with fixed+inset instead of trusting 100dvh, which
+   iOS standalone mis-measures on launch (the "white strip until you scroll" bug).
+   left/right:0 also fix the width absolutely, so no shrink-to-fit narrowing. */
 @media (display-mode: standalone), (max-width: 440px) {
   .phone-frame {
-    width: 100vw;
-    height: 100dvh;
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
     border-radius: 0;
     box-shadow: none;
   }
