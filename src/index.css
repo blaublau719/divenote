@@ -1,0 +1,982 @@
+/* ============================================================
+   Freedive Tracker — theme
+   Forest-green palette, soft textures, light & airy feel.
+   Designed against iPhone 13 mini (375 x 812 pt).
+   ============================================================ */
+
+:root {
+  /* palette — low-saturation, soft misty green */
+  --pine: #4a5d54;     /* deepest text / headings (muted, not dark) */
+  --forest: #7a978a;   /* primary accent, desaturated sage-green */
+  --sage: #93a59a;     /* secondary text */
+  --moss: #b9d0c2;     /* soft highlight green */
+  --mist: #dde6df;     /* misty pale green */
+  --paper: #eef2ec;    /* airy off-white base */
+  --ink: #44504a;      /* body text, soft charcoal-green */
+
+  /* frosted-glass material — subtle top-down sheen gives a tactile, pressable feel */
+  --glass: linear-gradient(180deg, rgba(255, 255, 255, 0.40), rgba(255, 255, 255, 0.22));
+  --glass-strong: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.40));
+  --glass-tint: linear-gradient(180deg, rgba(122, 151, 138, 0.30), rgba(122, 151, 138, 0.17));
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-tint-border: rgba(122, 151, 138, 0.55);
+  --glass-blur: blur(13px) saturate(1.1);
+  /* top highlight + faint bottom shade = a lip of real depth, not a flat fill */
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    inset 0 -1px 0 rgba(74, 93, 84, 0.07);
+  --glass-shadow: 0 6px 20px rgba(74, 93, 84, 0.09);
+
+  /* training markers: green = apnea, blue = freedive (kept far apart in hue) */
+  --dot-apnea: #4ca06a;
+  --dot-dive: #3f86c4;
+
+  /* restrained corner radii — refined, not bubbly */
+  --radius: 18px;
+  --radius-sm: 12px;
+
+  /* iPhone 13 mini logical size */
+  --frame-w: 375px;
+  --frame-h: 812px;
+
+  /* safe-area aware tab bar height */
+  --tabbar-h: 76px;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI',
+    system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  color: var(--ink);
+  /* outside the phone frame (desktop): a soft, low-saturation misty backdrop */
+  background:
+    radial-gradient(130% 90% at 50% 0%, #d6e1d8 0%, #bccabf 55%, #a7b8ab 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- the phone ---------- */
+
+.phone-frame {
+  width: var(--frame-w);
+  height: var(--frame-h);
+  max-height: 100dvh;
+  max-width: 100vw;
+  overflow: hidden;
+  position: relative;
+}
+
+/* On a real phone (standalone PWA) fill the whole screen, no frame chrome. */
+@media (display-mode: standalone), (max-width: 440px) {
+  .phone-frame {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* On desktop, show a nice device frame so you can preview the mini layout. */
+@media (min-width: 441px) {
+  .phone-frame {
+    border-radius: 44px;
+    box-shadow:
+      0 0 0 12px #0d1f17,
+      0 30px 80px rgba(0, 0, 0, 0.45);
+  }
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--paper);
+  /* layered texture: very soft low-sat green washes + fine frosted grain */
+  background-image:
+    radial-gradient(140% 60% at 50% -10%, rgba(185, 208, 194, 0.45), transparent 62%),
+    radial-gradient(120% 55% at 100% 100%, rgba(147, 165, 154, 0.20), transparent 58%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  overflow: hidden;
+}
+
+.screen-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 20px
+    calc(var(--tabbar-h) + 16px);
+}
+
+/* ---------- pages ---------- */
+
+.page-header {
+  padding: 24px 4px 16px;
+}
+
+.page-header h1 {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--pine);
+}
+
+.page-sub {
+  margin-top: 4px;
+  font-size: 15px;
+  color: var(--sage);
+}
+
+.card {
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+}
+
+.placeholder {
+  color: var(--sage);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* ---------- tab bar ---------- */
+
+.tab-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  display: flex;
+  align-items: stretch;
+  background: rgba(247, 249, 244, 0.72);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border-top: 1px solid rgba(82, 121, 111, 0.18);
+}
+
+.tab-item {
+  flex: 1;
+  border: none;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--sage);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.tab-item .tab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.tab-item .tab-icon svg {
+  width: 25px;
+  height: 25px;
+}
+
+/* FreeDiving tab uses the fins artwork as a mask so it tints with the tab color */
+.tab-icon .fins-mask {
+  display: block;
+  width: 26px;
+  height: 26px;
+  background-color: currentColor;
+  -webkit-mask: url(/fins.png?v=2) center / contain no-repeat;
+  mask: url(/fins.png?v=2) center / contain no-repeat;
+}
+
+.tab-item.is-active {
+  color: var(--forest);
+}
+
+.tab-item.is-active .tab-icon {
+  transform: translateY(-1px) scale(1.06);
+}
+
+.tab-item:active {
+  transform: scale(0.94);
+}
+
+/* ---------- shared controls ---------- */
+
+button {
+  font-family: inherit;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sage);
+  padding-left: 4px;
+}
+
+/* segmented control (posture / soundscape) */
+.seg {
+  display: grid;
+  gap: 10px;
+}
+
+.seg-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.seg-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 18px 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+  color: var(--sage);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease,
+    background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.seg-icon {
+  width: 26px;
+  height: 26px;
+  color: inherit;
+}
+
+.seg-btn.is-selected {
+  color: var(--pine);
+  background: var(--glass-tint);
+  border-color: var(--glass-tint-border);
+  box-shadow: var(--glass-highlight), 0 6px 18px rgba(122, 151, 138, 0.18);
+}
+
+.seg-btn:active {
+  transform: scale(0.96);
+}
+
+/* primary action */
+.btn-primary {
+  width: 100%;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius);
+  background: linear-gradient(
+    160deg,
+    rgba(143, 168, 155, 0.72),
+    rgba(122, 151, 138, 0.72)
+  );
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: #fbfdfb;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(74, 93, 84, 0.18), var(--glass-highlight);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-primary:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* ---------- Apnea: setup (fits one screen) ---------- */
+
+.apnea-setup,
+.apnea-end {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.setup-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  padding: 8px 0 20px;
+}
+
+/* ---------- Apnea: timer ---------- */
+
+.timer-screen {
+  /* bleed past the screen-content padding to fill edge-to-edge */
+  margin: calc(-1 * (env(safe-area-inset-top, 0px) + 12px)) -20px
+    calc(-1 * (var(--tabbar-h) + 16px));
+  /* fill the WHOLE screen (incl. the areas the negative margins bleed into),
+     so the scene reaches behind the tab bar with no blank strip */
+  min-height: calc(
+    100% + env(safe-area-inset-top, 0px) + 12px + var(--tabbar-h) + 16px
+  );
+  padding: 64px 24px calc(var(--tabbar-h) + 28px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+/* the ambient scene — blurred, scaled out so blur never shows a hard edge */
+.timer-screen::before {
+  content: '';
+  position: absolute;
+  inset: -8%;
+  z-index: -2;
+  background-size: cover;
+  background-position: center;
+  /* softening is baked into the photo; keep the live layer crisp */
+  transition: opacity 0.4s ease;
+}
+
+/* low-contrast veil over the scene: keeps it soft and the text readable */
+.timer-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(238, 242, 236, 0.3),
+    rgba(238, 242, 236, 0.18)
+  );
+}
+
+.timer-screen.bg-calm::before {
+  background-image: linear-gradient(180deg, #e7eef0, #eef2ec);
+  filter: none;
+}
+
+.timer-screen.bg-waves::before {
+  background-image: url('/scenes/waves.jpg');
+}
+
+.timer-screen.bg-rain::before {
+  background-image: url('/scenes/rain.jpg');
+}
+
+.timer-display {
+  margin-top: 10vh;
+  margin-bottom: auto;
+  font-size: 72px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  /* default (rain / calm): soft dark with a light halo to lift it off the scene */
+  color: rgba(40, 52, 48, 0.78);
+  text-shadow: 0 1px 12px rgba(244, 247, 243, 0.65);
+}
+
+/* the water photo is bright AND busy, so add a soft dark scrim near the top
+   (where the timer sits) and give the light digits a tight dark glow */
+.timer-screen.bg-waves::after {
+  background: linear-gradient(
+    180deg,
+    rgba(16, 40, 42, 0.36) 0%,
+    rgba(16, 40, 42, 0.12) 34%,
+    rgba(238, 242, 236, 0.06) 100%
+  );
+}
+
+.timer-screen.bg-waves .timer-display {
+  color: rgba(250, 252, 250, 0.98);
+  text-shadow: 0 1px 3px rgba(8, 26, 26, 0.6), 0 0 22px rgba(8, 26, 26, 0.55);
+}
+
+.timer-display.is-idle {
+  opacity: 0.7;
+}
+
+.timer-hint {
+  margin-bottom: 16px;
+  max-width: 240px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--sage);
+}
+
+.timer-screen.bg-waves .timer-hint {
+  color: rgba(245, 248, 246, 0.92);
+  text-shadow: 0 1px 8px rgba(16, 38, 38, 0.4);
+}
+
+.marker-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.marker-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: var(--radius-sm);
+  /* more opaque than the default glass so text stays readable over the
+     busier bamboo/water scenes */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.68));
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.3s ease;
+}
+
+.marker-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.marker-sub {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  /* darker than --sage for contrast on the glass */
+  color: rgba(60, 74, 67, 0.85);
+}
+
+.marker-btn:active {
+  transform: scale(0.96);
+}
+
+.marker-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
+  background: rgba(180, 190, 184, 0.4);
+  border-color: transparent;
+}
+
+.btn-finish {
+  width: 100%;
+  padding: 18px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--pine);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(74, 93, 84, 0.14), var(--glass-highlight);
+  transition: transform 0.15s ease;
+}
+
+.btn-finish:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Apnea: end ---------- */
+
+.reason-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reason-btn {
+  width: 100%;
+  padding: 16px 18px;
+  text-align: left;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+  color: var(--sage);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease,
+    background 0.2s ease, color 0.2s ease;
+}
+
+.reason-btn.is-selected {
+  color: var(--pine);
+  background: var(--glass-tint);
+  border-color: var(--glass-tint-border);
+}
+
+.reason-btn:active {
+  transform: scale(0.98);
+}
+
+.field-grow {
+  flex: 1;
+  margin-top: 22px;
+  margin-bottom: 18px;
+}
+
+.comment-input {
+  flex: 1;
+  width: 100%;
+  min-height: 120px;
+  resize: none;
+  padding: 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.comment-input::placeholder {
+  color: rgba(147, 165, 154, 0.8);
+}
+
+.comment-input:focus {
+  outline: none;
+  border-color: var(--glass-tint-border);
+}
+
+/* ---------- FreeDiving: form ---------- */
+
+.dive-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-glass {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 16px; /* >=16px avoids iOS zoom-on-focus */
+}
+
+.input-glass:focus {
+  outline: none;
+  border-color: var(--glass-tint-border);
+}
+
+.field-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--sage);
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.info-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+.info-btn.is-open,
+.info-btn:hover {
+  color: var(--forest);
+}
+
+.info-btn:active {
+  transform: scale(0.9);
+}
+
+.info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+}
+
+.info-row {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.info-code {
+  flex: 0 0 38px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--dot-dive);
+}
+
+.info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pine);
+}
+
+.info-desc {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--sage);
+}
+
+.info-foot {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sage);
+  text-align: right;
+}
+
+.seg-5 {
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.seg-btn-text {
+  padding: 15px 4px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Statistic: calendar ---------- */
+
+.cal {
+  padding: 18px;
+}
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.cal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--pine);
+  letter-spacing: -0.01em;
+}
+
+.cal-arrow {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+  color: var(--pine);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.cal-arrow:active {
+  transform: scale(0.92);
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sage);
+  padding-bottom: 4px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: none;
+  color: var(--ink);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.cal-day.is-empty {
+  visibility: hidden;
+  cursor: default;
+}
+
+.cal-num {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-day.is-today .cal-num {
+  font-weight: 700;
+  color: var(--pine);
+}
+
+.cal-day.is-selected {
+  background: var(--glass-tint);
+  border-color: var(--glass-tint-border);
+}
+
+.cal-day:active {
+  transform: scale(0.92);
+}
+
+/* day marker: two stacked rows — apnea (green) on top, dive (blue) below.
+   A single-type day fills only its own row; both types fill both. */
+.cal-bar {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  width: 14px;
+  height: 11px;
+}
+
+.bar-seg {
+  border-radius: 2px;
+}
+
+.seg-apnea {
+  background: var(--dot-apnea);
+}
+
+.seg-dive {
+  background: var(--dot-dive);
+}
+
+.bar-seg.is-off {
+  background: transparent;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+
+.dot-apnea {
+  background: var(--dot-apnea);
+}
+
+.dot-dive {
+  background: var(--dot-dive);
+}
+
+.cal-legend {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--sage);
+}
+
+.cal-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- Statistic: day detail ---------- */
+
+.day-detail {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-empty {
+  text-align: center;
+  color: var(--sage);
+  font-size: 14px;
+  padding: 22px 12px;
+}
+
+.rec-card {
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+}
+
+.rec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.rec-tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fbfdfb;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.tag-apnea {
+  background: var(--dot-apnea);
+}
+
+.tag-dive {
+  background: var(--dot-dive);
+}
+
+.rec-head-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rec-headline {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--pine);
+  font-variant-numeric: tabular-nums;
+}
+
+.rec-del {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 26px;
+  height: 30px;
+  /* pull the icon flush with the card's right content edge */
+  margin-right: -2px;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--sage);
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.rec-del svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rec-del:active {
+  transform: scale(0.88);
+}
+
+.rec-del:hover {
+  color: #c0635a;
+}
+
+.rec-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+  color: var(--ink);
+}
+
+.rec-row span:first-child {
+  color: var(--sage);
+}
+
+.rec-note {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(147, 165, 154, 0.25);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+}
