@@ -90,16 +90,14 @@ body {
 }
 
 /* On a real phone (standalone PWA) fill the whole screen, no frame chrome.
-   Pin to the viewport edges with fixed+inset instead of trusting 100dvh, which
-   iOS standalone mis-measures on launch (the "white strip until you scroll" bug).
-   left/right:0 also fix the width absolutely, so no shrink-to-fit narrowing. */
+   Height comes from --app-height (JS-measured window.innerHeight), which iOS
+   reports correctly — unlike 100dvh, which it mis-measures at launch. 100dvh is
+   only the fallback before the script runs. */
 @media (display-mode: standalone), (max-width: 440px) {
   .phone-frame {
-    position: fixed;
-    inset: 0;
-    width: auto;
-    height: auto;
-    max-width: none;
+    width: 100vw;
+    height: 100dvh;
+    height: var(--app-height, 100dvh);
     max-height: none;
     border-radius: 0;
     box-shadow: none;
