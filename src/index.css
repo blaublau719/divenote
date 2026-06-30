@@ -60,8 +60,10 @@ body,
 }
 
 html {
-  /* match the backdrop so a transient viewport gap never flashes white */
-  background-color: #aebfb2;
+  /* ROOT CAUSE FIX: the root element is otherwise transparent (= white), so any
+     edge iOS briefly leaves uncovered (home indicator, launch, keyboard) flashes
+     white. Paint it the app's base colour so such a gap blends in. */
+  background-color: var(--paper);
 }
 
 body {
@@ -69,7 +71,7 @@ body {
   /* outside the phone frame (desktop): a soft, low-saturation misty backdrop */
   background:
     radial-gradient(130% 90% at 50% 0%, #d6e1d8 0%, #bccabf 55%, #a7b8ab 100%);
-  background-color: #aebfb2;
+  /* don't let the document rubber-band and reveal what's behind it */
   overscroll-behavior: none;
   display: flex;
   align-items: center;
@@ -89,17 +91,9 @@ body {
 
 /* On a real phone (standalone PWA) fill the whole screen, no frame chrome. */
 @media (display-mode: standalone), (max-width: 440px) {
-  /* lock the page to the viewport so iOS can't rubber-band a white strip in,
-     and avoid the flaky 100dvh by sizing against the fixed body instead */
-  body {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-  }
   .phone-frame {
-    width: 100%;
-    height: 100%;
-    max-height: 100%;
+    width: 100vw;
+    height: 100dvh;
     border-radius: 0;
     box-shadow: none;
   }
