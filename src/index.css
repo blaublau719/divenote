@@ -80,11 +80,19 @@ body {
   position: relative;
 }
 
-/* On a real phone (standalone PWA) fill the whole screen, no frame chrome. */
+/* On a real phone (standalone PWA) fill the whole screen, no frame chrome.
+   Instead of computing a height (dvh/%/fill-available all mis-measure on iOS
+   at launch), pin all four edges to the viewport with fixed + inset:0. Filling
+   by "sticking to the edges" sidesteps the height mis-measure entirely, so no
+   background strip can leak at top or bottom. */
 @media (display-mode: standalone), (max-width: 440px) {
   .phone-frame {
-    width: 100vw;
-    height: 100dvh;
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
     border-radius: 0;
     box-shadow: none;
   }
