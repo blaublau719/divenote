@@ -59,6 +59,14 @@ body,
   height: 100%;
 }
 
+/* iOS Safari mis-measures vh/dvh at launch (the "white strip until you scroll"
+   bug). -webkit-fill-available resolves to the true visible height instead, so
+   the 100% chain above lands on the right value. Non-webkit browsers ignore
+   this line and keep 100%. */
+html {
+  height: -webkit-fill-available;
+}
+
 body {
   color: var(--ink);
   /* outside the phone frame (desktop): a soft, low-saturation misty backdrop */
@@ -80,11 +88,17 @@ body {
   position: relative;
 }
 
-/* On a real phone (standalone PWA) fill the whole screen, no frame chrome. */
+/* On a real phone (standalone PWA) fill the whole screen, no frame chrome.
+   height order matters: 100dvh is the fallback (self-heals on scroll); iOS
+   Safari understands -webkit-fill-available and uses that instead — the true
+   visible height, correct from launch. max-height:none drops the dvh cap so
+   the frame can't be clamped shorter than the body behind it. */
 @media (display-mode: standalone), (max-width: 440px) {
   .phone-frame {
     width: 100vw;
     height: 100dvh;
+    height: -webkit-fill-available;
+    max-height: none;
     border-radius: 0;
     box-shadow: none;
   }
