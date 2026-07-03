@@ -80,11 +80,16 @@ body {
   position: relative;
 }
 
-/* On a real phone (standalone PWA) fill the whole screen, no frame chrome. */
+/* On a real phone (standalone PWA) fill the whole screen, no frame chrome.
+   Use the reliable 100% chain (html/body/#root are all 100%) instead of 100dvh:
+   iOS mis-measures dvh at launch, so a dvh-sized frame ends up shorter than the
+   100%-sized body behind it and the centred frame leaks the body background at
+   top and bottom. Matching units makes the frame exactly fill the body. */
 @media (display-mode: standalone), (max-width: 440px) {
   .phone-frame {
     width: 100vw;
-    height: 100dvh;
+    height: 100%;
+    max-height: none;
     border-radius: 0;
     box-shadow: none;
   }
