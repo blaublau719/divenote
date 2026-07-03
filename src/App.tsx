@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import TabBar, { type TabKey } from './components/TabBar'
+import InstallHint from './components/InstallHint'
 import Apnea from './pages/Apnea'
 import FreeDiving from './pages/FreeDiving'
 import Statistic from './pages/Statistic'
@@ -11,6 +12,7 @@ export default function App() {
     <div className="phone-frame">
       <div className="screen">
         <main className="screen-content">
+          <InstallHint />
           {tab === 'apnea' && <Apnea />}
           {tab === 'freediving' && <FreeDiving />}
           {tab === 'statistic' && <Statistic />}

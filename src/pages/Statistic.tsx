@@ -1,7 +1,13 @@
-import { useMemo, useState } from 'react'
-import { loadData, deleteApneaSession, deleteDiveSession } from '../data/storage'
+import { useMemo, useRef, useState } from 'react'
+import {
+  loadData,
+  deleteApneaSession,
+  deleteDiveSession,
+  exportJson,
+  importJson,
+} from '../data/storage'
 import type { ApneaSession, DiveSession } from '../data/types'
-import { IconTrash } from '../components/icons'
+import { IconTrash, IconExport, IconImport } from '../components/icons'
 
 const pad = (n: number) => String(n).padStart(2, '0')
 const fmtDur = (s: number) => `${pad(Math.floor(s / 60))}:${pad(s % 60)}`
@@ -29,6 +35,30 @@ export default function Statistic() {
   const today = useMemo(() => new Date(), [])
   const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() })
   const [selected, setSelected] = useState<string | null>(localKey(today))
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function handleExport() {
+    const blob = new Blob([exportJson()], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `divenote-backup-${localKey(new Date())}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = '' // reset so the same file can be re-imported later
+    if (!file) return
+    try {
+      const text = await file.text()
+      setData(importJson(text))
+      window.alert('Backup imported.')
+    } catch {
+      window.alert('Could not read this file. Make sure it is a Divenote backup.')
+    }
+  }
 
   function removeApnea(id: string) {
     if (!window.confirm('Delete this apnea record?')) return
@@ -72,8 +102,35 @@ export default function Statistic() {
   return (
     <div className="page">
       <header className="page-header">
-        <h1>Statistic</h1>
-        <p className="page-sub">Your training calendar</p>
+        <div>
+          <h1>Statistic</h1>
+          <p className="page-sub">Your training calendar</p>
+        </div>
+        <div className="header-actions">
+          <button
+            className="header-action"
+            onClick={handleExport}
+            aria-label="Export backup"
+            title="Export backup"
+          >
+            <IconExport />
+          </button>
+          <button
+            className="header-action"
+            onClick={() => fileInputRef.current?.click()}
+            aria-label="Import backup"
+            title="Import backup"
+          >
+            <IconImport />
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={handleImportFile}
+            hidden
+          />
+        </div>
       </header>
 
       <div className="card cal">

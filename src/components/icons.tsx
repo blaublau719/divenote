@@ -149,6 +149,28 @@ export function IconTrash({ className }: IconProps) {
   )
 }
 
+/** Export — download the data as a backup file (tray with a down arrow). */
+export function IconExport({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M14 4.5 V15.5" />
+      <path d="M9.5 11 L14 15.5 L18.5 11" />
+      <path d="M6 18 V21 a2 2 0 0 0 2 2 H20 a2 2 0 0 0 2 -2 V18" />
+    </svg>
+  )
+}
+
+/** Import — restore data from a backup file (tray with an up arrow). */
+export function IconImport({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M14 15.5 V4.5" />
+      <path d="M9.5 9 L14 4.5 L18.5 9" />
+      <path d="M6 18 V21 a2 2 0 0 0 2 2 H20 a2 2 0 0 0 2 -2 V18" />
+    </svg>
+  )
+}
+
 /** Statistic tab — a calendar with entry dots. Enlarged/weighted to match the
  *  other tab icons. */
 export function IconCalendar({ className }: IconProps) {

@@ -128,7 +128,92 @@ body {
 /* ---------- pages ---------- */
 
 .page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
   padding: 24px 4px 16px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+/* Deliberately understated — rarely-used backup actions, icon only. */
+.header-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--sage);
+  opacity: 0.65;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.header-action svg {
+  width: 19px;
+  height: 19px;
+}
+
+.header-action:hover {
+  opacity: 1;
+}
+
+.header-action:active {
+  transform: scale(0.9);
+}
+
+.install-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 -4px;
+  padding: 10px 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+}
+
+.install-hint-text {
+  flex: 1;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--sage);
+}
+
+.install-hint-add {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: var(--pine);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.install-hint-close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--sage);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .page-header h1 {
