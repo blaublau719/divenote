@@ -453,6 +453,39 @@ button {
   background: var(--paper);
 }
 
+/* back to setup (change soundscape) — top-left, clear of the status bar */
+.timer-back {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: 16px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+  color: var(--pine);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.timer-back svg {
+  width: 22px;
+  height: 22px;
+  /* nudge the chevron visually centred in the circle */
+  margin-left: -2px;
+}
+
+.timer-back:active {
+  transform: scale(0.92);
+}
+
 /* the ambient scene — blurred, scaled out so blur never shows a hard edge */
 .timer-screen::before {
   content: '';

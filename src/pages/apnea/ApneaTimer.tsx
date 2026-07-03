@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Sound } from '../../data/types'
+import { IconArrowLeft } from '../../components/icons'
 
 interface Props {
   sound: Sound
+  /** Go back to setup (e.g. to change the soundscape) — only before the hold starts. */
+  onBack: () => void
   /** Called on finish with the total elapsed seconds and the two marker times. */
   onFinish: (durationSec: number, contractionAtSec: number | null, struggleAtSec: number | null) => void
 }
@@ -24,7 +27,7 @@ function format(totalSec: number): string {
  * Arrives "armed": the ambient scene is showing and the user breathes up.
  * Tapping "Start Recording" begins the count, the soundscape, and the markers.
  */
-export default function ApneaTimer({ sound, onFinish }: Props) {
+export default function ApneaTimer({ sound, onBack, onFinish }: Props) {
   const [recording, setRecording] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const [contractionAt, setContractionAt] = useState<number | null>(null)
@@ -66,6 +69,12 @@ export default function ApneaTimer({ sound, onFinish }: Props) {
 
   return (
     <div className={'timer-screen ' + bgClass}>
+      {!recording && (
+        <button className="timer-back" onClick={onBack} aria-label="Go back" type="button">
+          <IconArrowLeft />
+        </button>
+      )}
+
       <div className={'timer-display' + (recording ? '' : ' is-idle')}>
         {format(elapsed)}
       </div>

@@ -24,13 +24,19 @@ const SOUNDS: { value: Sound; label: string; Icon: IconCmp }[] = [
 ]
 
 interface Props {
+  initialPosture?: Posture
+  initialSound?: Sound
   onStart: (posture: Posture, sound: Sound) => void
 }
 
 /** Step 1 — pick posture + soundscape, then start. Fits one screen, no scroll. */
-export default function ApneaSetup({ onStart }: Props) {
-  const [posture, setPosture] = useState<Posture>('sit')
-  const [sound, setSound] = useState<Sound>('waves')
+export default function ApneaSetup({
+  initialPosture = 'sit',
+  initialSound = 'waves',
+  onStart,
+}: Props) {
+  const [posture, setPosture] = useState<Posture>(initialPosture)
+  const [sound, setSound] = useState<Sound>(initialSound)
 
   return (
     <div className="apnea-setup">

@@ -57,10 +57,23 @@ export default function Apnea() {
   }
 
   if (step === 'timer' && draft) {
-    return <ApneaTimer sound={draft.sound} onFinish={handleFinish} />
+    return (
+      <ApneaTimer
+        sound={draft.sound}
+        onBack={() => setStep('setup')}
+        onFinish={handleFinish}
+      />
+    )
   }
   if (step === 'end' && draft) {
     return <ApneaEnd durationSec={draft.durationSec} onSave={handleSave} />
   }
-  return <ApneaSetup onStart={handleStart} />
+  // when returning from the timer, restore the previous posture/sound selection
+  return (
+    <ApneaSetup
+      initialPosture={draft?.posture}
+      initialSound={draft?.sound}
+      onStart={handleStart}
+    />
+  )
 }

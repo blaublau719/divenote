@@ -149,6 +149,15 @@ export function IconTrash({ className }: IconProps) {
   )
 }
 
+/** Back — a left-pointing chevron. */
+export function IconArrowLeft({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M17 6 L9 14 L17 22" />
+    </svg>
+  )
+}
+
 /** Export — download the data as a backup file (tray with a down arrow). */
 export function IconExport({ className }: IconProps) {
   return (
