@@ -9,7 +9,7 @@ import {
   importJson,
 } from '../data/storage'
 import type { ApneaSession, DiveSession } from '../data/types'
-import { pad, fmtDur } from '../data/format'
+import { pad, fmtDur, diveSpeed } from '../data/format'
 import { IconTrash, IconExport, IconImport, IconPencil } from '../components/icons'
 import ApneaEditForm from '../components/ApneaEditForm'
 import DiveEditForm from '../components/DiveEditForm'
@@ -262,6 +262,12 @@ export default function Statistic() {
                     <span>Dive time</span>
                     <span>{d.durationSec != null ? fmtDur(d.durationSec) : '—'}</span>
                   </div>
+                  {(() => {
+                    const v = diveSpeed(d.depth, d.durationSec)
+                    return v != null ? (
+                      <div className="rec-row"><span>Speed</span><span>{v.toFixed(2)} m/s</span></div>
+                    ) : null
+                  })()}
                   {d.comment && <p className="rec-note">{d.comment}</p>}
                 </div>
               ),

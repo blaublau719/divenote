@@ -26,6 +26,15 @@ export function sanitizeDepthInput(text: string): string {
   return t
 }
 
+/**
+ * Average dive speed in m/s: the dive covers depth down and back up
+ * (depth * 2) in durationSec. Null when no usable time is recorded.
+ */
+export function diveSpeed(depth: number, durationSec: number | null | undefined): number | null {
+  if (durationSec == null || durationSec <= 0 || depth <= 0) return null
+  return Math.round(((depth * 2) / durationSec) * 100) / 100
+}
+
 /** Split seconds into { min, sec } strings for two-field editing ("" when null). */
 export function splitDur(sec: number | null | undefined): { min: string; sec: string } {
   if (sec == null) return { min: '', sec: '' }

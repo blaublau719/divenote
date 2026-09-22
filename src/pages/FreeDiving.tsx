@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Discipline } from '../data/types'
 import { addDiveSession } from '../data/storage'
-import { parseDepth, sanitizeDepthInput, joinDur } from '../data/format'
+import { parseDepth, sanitizeDepthInput, joinDur, diveSpeed } from '../data/format'
 import { IconInfo } from '../components/icons'
 import DurationInput from '../components/DurationInput'
 
@@ -35,6 +35,7 @@ export default function FreeDiving() {
 
   const depthNum = parseDepth(depth)
   const valid = !!date && depthNum !== null
+  const speed = depthNum !== null ? diveSpeed(depthNum, joinDur(min, sec)) : null
 
   function handleSave() {
     if (!valid || depthNum === null) return
@@ -136,6 +137,13 @@ export default function FreeDiving() {
             />
           </div>
         </div>
+
+        {speed != null && (
+          <p className="speed-hint">
+            Average speed <strong>{speed.toFixed(2)} m/s</strong>
+            <span className="speed-formula"> · depth × 2 ÷ time</span>
+          </p>
+        )}
 
         <div className="form-field">
           <label className="field-label" htmlFor="dive-note">How did it feel?</label>

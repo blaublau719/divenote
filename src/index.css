@@ -1167,6 +1167,24 @@ button {
   font-size: 14px;
 }
 
+/* live speed read-out under depth / time */
+.speed-hint {
+  margin: -8px 0 0;
+  padding-left: 4px;
+  font-size: 13px;
+  color: var(--sage);
+}
+
+.speed-hint strong {
+  color: var(--pine);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.speed-formula {
+  opacity: 0.75;
+}
+
 /* ---------- Depth + dive time side by side ---------- */
 
 .form-row {
