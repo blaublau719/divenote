@@ -3,14 +3,17 @@ import {
   loadData,
   deleteApneaSession,
   deleteDiveSession,
+  updateApneaSession,
+  updateDiveSession,
   exportJson,
   importJson,
 } from '../data/storage'
 import type { ApneaSession, DiveSession } from '../data/types'
-import { IconTrash, IconExport, IconImport } from '../components/icons'
+import { pad, fmtDur } from '../data/format'
+import { IconTrash, IconExport, IconImport, IconPencil } from '../components/icons'
+import ApneaEditForm from '../components/ApneaEditForm'
+import DiveEditForm from '../components/DiveEditForm'
 
-const pad = (n: number) => String(n).padStart(2, '0')
-const fmtDur = (s: number) => `${pad(Math.floor(s / 60))}:${pad(s % 60)}`
 const localKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 
 const MONTHS = [
@@ -35,6 +38,7 @@ export default function Statistic() {
   const today = useMemo(() => new Date(), [])
   const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() })
   const [selected, setSelected] = useState<string | null>(localKey(today))
+  const [editingId, setEditingId] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   function handleExport() {
@@ -68,6 +72,14 @@ export default function Statistic() {
     if (!window.confirm('Delete this dive record?')) return
     setData(deleteDiveSession(id))
   }
+  function saveApnea(id: string, patch: Partial<Omit<ApneaSession, 'id'>>) {
+    setData(updateApneaSession(id, patch))
+    setEditingId(null)
+  }
+  function saveDive(id: string, patch: Partial<Omit<DiveSession, 'id'>>) {
+    setData(updateDiveSession(id, patch))
+    setEditingId(null)
+  }
 
   // group every session under its local day key
   const byDay = useMemo(() => {
@@ -95,6 +107,11 @@ export default function Statistic() {
       const d = new Date(v.y, v.m + delta, 1)
       return { y: d.getFullYear(), m: d.getMonth() }
     })
+  }
+
+  function selectDay(key: string) {
+    setSelected(key)
+    setEditingId(null)
   }
 
   const sel = selected ? byDay.get(selected) : undefined
@@ -158,7 +175,7 @@ export default function Statistic() {
               (key === todayKey ? ' is-today' : '') +
               (key === selected ? ' is-selected' : '')
             return (
-              <button key={key} className={cls} onClick={() => setSelected(key)}>
+              <button key={key} className={cls} onClick={() => selectDay(key)}>
                 <span className="cal-num">{day}</span>
                 <span className="cal-bar">
                   <span className={'bar-seg ' + topClass} />
@@ -182,45 +199,73 @@ export default function Statistic() {
           </p>
         ) : (
           <>
-            {sel.apnea.map((a) => (
-              <div className="rec-card" key={a.id}>
-                <div className="rec-head">
-                  <span className="rec-tag tag-apnea">Apnea</span>
-                  <div className="rec-head-right">
-                    <span className="rec-headline">{fmtDur(a.durationSec)}</span>
-                    <button className="rec-del" aria-label="Delete record" onClick={() => removeApnea(a.id)}>
-                      <IconTrash />
-                    </button>
+            {sel.apnea.map((a) =>
+              editingId === a.id ? (
+                <ApneaEditForm
+                  key={a.id}
+                  session={a}
+                  onSave={(patch) => saveApnea(a.id, patch)}
+                  onCancel={() => setEditingId(null)}
+                />
+              ) : (
+                <div className="rec-card" key={a.id}>
+                  <div className="rec-head">
+                    <span className="rec-tag tag-apnea">Apnea</span>
+                    <div className="rec-head-right">
+                      <span className="rec-headline">{fmtDur(a.durationSec)}</span>
+                      <button className="rec-act" aria-label="Edit record" onClick={() => setEditingId(a.id)}>
+                        <IconPencil />
+                      </button>
+                      <button className="rec-act rec-del" aria-label="Delete record" onClick={() => removeApnea(a.id)}>
+                        <IconTrash />
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div className="rec-row"><span>Posture</span><span>{POSTURE[a.posture]}</span></div>
-                <div className="rec-row"><span>Soundscape</span><span>{SOUND[a.sound]}</span></div>
-                <div className="rec-row">
-                  <span>Contractions</span>
-                  <span>{a.contractionAtSec != null ? fmtDur(a.contractionAtSec) : '—'}</span>
-                </div>
-                <div className="rec-row">
-                  <span>Struggle</span>
-                  <span>{a.struggleAtSec != null ? fmtDur(a.struggleAtSec) : '—'}</span>
-                </div>
-                <div className="rec-row"><span>Stopped</span><span>{END_REASON[a.endReason]}</span></div>
-                {a.comment && <p className="rec-note">{a.comment}</p>}
-              </div>
-            ))}
-            {sel.dive.map((d) => (
-              <div className="rec-card" key={d.id}>
-                <div className="rec-head">
-                  <span className="rec-tag tag-dive">{d.discipline}</span>
-                  <div className="rec-head-right">
-                    <span className="rec-headline">{d.depth.toFixed(1)} m</span>
-                    <button className="rec-del" aria-label="Delete record" onClick={() => removeDive(d.id)}>
-                      <IconTrash />
-                    </button>
+                  <div className="rec-row"><span>Posture</span><span>{POSTURE[a.posture]}</span></div>
+                  <div className="rec-row"><span>Soundscape</span><span>{SOUND[a.sound]}</span></div>
+                  <div className="rec-row">
+                    <span>Contractions</span>
+                    <span>{a.contractionAtSec != null ? fmtDur(a.contractionAtSec) : '—'}</span>
                   </div>
+                  <div className="rec-row">
+                    <span>Struggle</span>
+                    <span>{a.struggleAtSec != null ? fmtDur(a.struggleAtSec) : '—'}</span>
+                  </div>
+                  <div className="rec-row"><span>Stopped</span><span>{END_REASON[a.endReason]}</span></div>
+                  {a.comment && <p className="rec-note">{a.comment}</p>}
                 </div>
-                {d.comment && <p className="rec-note">{d.comment}</p>}
-              </div>
-            ))}
+              ),
+            )}
+            {sel.dive.map((d) =>
+              editingId === d.id ? (
+                <DiveEditForm
+                  key={d.id}
+                  session={d}
+                  onSave={(patch) => saveDive(d.id, patch)}
+                  onCancel={() => setEditingId(null)}
+                />
+              ) : (
+                <div className="rec-card" key={d.id}>
+                  <div className="rec-head">
+                    <span className="rec-tag tag-dive">{d.discipline}</span>
+                    <div className="rec-head-right">
+                      <span className="rec-headline">{d.depth.toFixed(1)} m</span>
+                      <button className="rec-act" aria-label="Edit record" onClick={() => setEditingId(d.id)}>
+                        <IconPencil />
+                      </button>
+                      <button className="rec-act rec-del" aria-label="Delete record" onClick={() => removeDive(d.id)}>
+                        <IconTrash />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="rec-row">
+                    <span>Dive time</span>
+                    <span>{d.durationSec != null ? fmtDur(d.durationSec) : '—'}</span>
+                  </div>
+                  {d.comment && <p className="rec-note">{d.comment}</p>}
+                </div>
+              ),
+            )}
           </>
         )}
       </div>

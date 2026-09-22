@@ -201,3 +201,32 @@ export function IconCalendar({ className }: IconProps) {
     </svg>
   )
 }
+
+/** Edit — a pencil. */
+export function IconPencil({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M17.6 5.4 L22.6 10.4 L10.2 22.8 L5 23.2 L5.4 18 Z" />
+      <path d="M15.4 7.6 L20.4 12.6" />
+    </svg>
+  )
+}
+
+/** Confirm — a check mark. */
+export function IconCheck({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M6 14.5 L11.5 20 L22 8.5" />
+    </svg>
+  )
+}
+
+/** Cancel — a small cross. */
+export function IconClose({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M8 8 L20 20" />
+      <path d="M20 8 L8 20" />
+    </svg>
+  )
+}

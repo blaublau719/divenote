@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import type { Discipline } from '../data/types'
 import { addDiveSession } from '../data/storage'
+import { parseDepth, sanitizeDepthInput, joinDur } from '../data/format'
 import { IconInfo } from '../components/icons'
+import DurationInput from '../components/DurationInput'
 
-const DISCIPLINES: Discipline[] = ['DYN', 'DNF', 'CWT', 'CNF', 'FIM']
+export const DISCIPLINES: Discipline[] = ['DNF', 'DYN', 'FIM', 'CWT', 'CNF']
 
 // AIDA competitive disciplines
 const DISCIPLINE_INFO: Record<Discipline, { name: string; desc: string }> = {
-  DYN: { name: 'Dynamic With Fins', desc: 'Horizontal distance underwater using fins (monofin or bi-fins).' },
   DNF: { name: 'Dynamic No Fins', desc: 'Horizontal distance underwater without fins.' },
+  DYN: { name: 'Dynamic With Fins', desc: 'Horizontal distance underwater using fins (monofin or bi-fins).' },
+  FIM: { name: 'Free Immersion', desc: 'Down to depth and back by pulling on the line, no fins; weight constant.' },
   CWT: { name: 'Constant Weight', desc: 'Down to depth and back with fins, without pulling the line; weight stays constant.' },
   CNF: { name: 'Constant Weight No Fins', desc: 'Down to depth and back without fins and without pulling the line; weight constant.' },
-  FIM: { name: 'Free Immersion', desc: 'Down to depth and back by pulling on the line, no fins; weight constant.' },
 }
 
 function todayLocal(): string {
@@ -20,27 +22,32 @@ function todayLocal(): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
 }
 
-/** FreeDiving tab — log one dive: date, discipline, depth, and how it felt. */
+/** FreeDiving tab — log one dive: date, discipline, dive time, depth, and how it felt. */
 export default function FreeDiving() {
   const [date, setDate] = useState(todayLocal())
-  const [discipline, setDiscipline] = useState<Discipline>('CWT')
+  const [discipline, setDiscipline] = useState<Discipline>('FIM')
   const [depth, setDepth] = useState('')
+  const [min, setMin] = useState('')
+  const [sec, setSec] = useState('')
   const [comment, setComment] = useState('')
   const [saved, setSaved] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
 
-  const depthNum = parseFloat(depth)
-  const valid = !!date && !Number.isNaN(depthNum) && depthNum > 0
+  const depthNum = parseDepth(depth)
+  const valid = !!date && depthNum !== null
 
   function handleSave() {
-    if (!valid) return
+    if (!valid || depthNum === null) return
     addDiveSession({
       date,
       discipline,
-      depth: Math.round(depthNum * 10) / 10, // keep one decimal
+      depth: depthNum,
+      durationSec: joinDur(min, sec),
       comment: comment.trim(),
     })
     setDepth('')
+    setMin('')
+    setSec('')
     setComment('')
     setSaved(true)
     window.setTimeout(() => setSaved(false), 1800)
@@ -105,19 +112,29 @@ export default function FreeDiving() {
           </div>
         </div>
 
-        <div className="form-field">
-          <label className="field-label" htmlFor="dive-depth">Depth (m)</label>
-          <input
-            id="dive-depth"
-            type="number"
-            inputMode="decimal"
-            step="0.1"
-            min="0"
-            placeholder="0.0"
-            className="input-glass"
-            value={depth}
-            onChange={(e) => setDepth(e.target.value)}
-          />
+        <div className="form-row">
+          <div className="form-field form-field-depth">
+            <label className="field-label" htmlFor="dive-depth">Depth (m)</label>
+            <input
+              id="dive-depth"
+              type="text"
+              inputMode="decimal"
+              placeholder="0.0"
+              className="input-glass"
+              value={depth}
+              onChange={(e) => setDepth(sanitizeDepthInput(e.target.value))}
+            />
+          </div>
+
+          <div className="form-field form-field-time">
+            <label className="field-label" htmlFor="dive-dur-min">Dive time</label>
+            <DurationInput
+              idPrefix="dive-dur"
+              min={min}
+              sec={sec}
+              onChange={(m, s) => { setMin(m); setSec(s) }}
+            />
+          </div>
         </div>
 
         <div className="form-field">

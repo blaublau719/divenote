@@ -41,6 +41,20 @@ export function addDiveSession(session: Omit<DiveSession, 'id'>): AppData {
   return data
 }
 
+export function updateApneaSession(id: string, patch: Partial<Omit<ApneaSession, 'id'>>): AppData {
+  const data = loadData()
+  data.apneaSessions = data.apneaSessions.map((s) => (s.id === id ? { ...s, ...patch } : s))
+  saveData(data)
+  return data
+}
+
+export function updateDiveSession(id: string, patch: Partial<Omit<DiveSession, 'id'>>): AppData {
+  const data = loadData()
+  data.diveSessions = data.diveSessions.map((s) => (s.id === id ? { ...s, ...patch } : s))
+  saveData(data)
+  return data
+}
+
 export function deleteApneaSession(id: string): AppData {
   const data = loadData()
   data.apneaSessions = data.apneaSessions.filter((s) => s.id !== id)

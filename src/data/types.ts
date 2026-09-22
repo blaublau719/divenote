@@ -29,6 +29,8 @@ export interface DiveSession {
   discipline: Discipline
   /** depth in metres, one decimal place */
   depth: number
+  /** dive time in seconds (min:sec), or null/undefined if not recorded */
+  durationSec?: number | null
   comment: string
 }
 

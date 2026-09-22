@@ -1064,33 +1064,162 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
-.rec-del {
+.rec-act {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  width: 26px;
+  justify-content: center;
+  width: 30px;
   height: 30px;
-  /* pull the icon flush with the card's right content edge */
-  margin-right: -2px;
   border: none;
   background: none;
   padding: 0;
   color: var(--sage);
   cursor: pointer;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition: color 0.15s ease, transform 0.15s ease, opacity 0.2s ease;
 }
 
-.rec-del svg {
+.rec-act:last-child {
+  /* pull the last icon flush with the card's right content edge */
+  margin-right: -6px;
+}
+
+.rec-act svg {
   width: 18px;
   height: 18px;
 }
 
-.rec-del:active {
+.rec-act:active {
   transform: scale(0.88);
+}
+
+.rec-act:hover {
+  color: var(--pine);
 }
 
 .rec-del:hover {
   color: #c0635a;
+}
+
+.rec-ok {
+  color: var(--pine);
+}
+
+.rec-ok svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+
+.rec-ok:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ---------- Statistic: in-place record editing ---------- */
+
+.rec-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rec-edit .rec-head {
+  margin-bottom: 0;
+}
+
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.edit-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--sage);
+  padding-left: 2px;
+}
+
+.seg-2 {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.seg-compact .seg-btn {
+  padding: 11px 4px;
+  font-size: 12px;
+}
+
+.seg-compact.seg-2 .seg-btn {
+  padding: 11px 8px;
+}
+
+.rec-edit .input-glass {
+  padding: 11px 12px;
+}
+
+.comment-compact {
+  min-height: 84px;
+  padding: 12px 14px;
+  font-size: 14px;
+}
+
+/* ---------- Depth + dive time side by side ---------- */
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.form-field-depth {
+  flex: 0 0 38%;
+  min-width: 0;
+}
+
+.form-field-time {
+  flex: 1;
+  min-width: 0;
+}
+
+.dur-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dur-field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.dur-num {
+  padding-right: 40px !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.dur-unit {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--sage);
+  pointer-events: none;
+}
+
+.dur-colon {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--sage);
+  line-height: 1;
 }
 
 .rec-row {
