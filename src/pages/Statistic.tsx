@@ -72,13 +72,22 @@ export default function Statistic() {
     if (!window.confirm('Delete this dive record?')) return
     setData(deleteDiveSession(id))
   }
+  /** After an edit moved a record to another day, show that day (and its month). */
+  function followDay(key: string) {
+    if (key === selected) return
+    setSelected(key)
+    const [y, m] = key.split('-').map(Number)
+    setView({ y, m: m - 1 })
+  }
   function saveApnea(id: string, patch: Partial<Omit<ApneaSession, 'id'>>) {
     setData(updateApneaSession(id, patch))
     setEditingId(null)
+    if (patch.date) followDay(localKey(new Date(patch.date)))
   }
   function saveDive(id: string, patch: Partial<Omit<DiveSession, 'id'>>) {
     setData(updateDiveSession(id, patch))
     setEditingId(null)
+    if (patch.date) followDay(patch.date.slice(0, 10))
   }
 
   // group every session under its local day key

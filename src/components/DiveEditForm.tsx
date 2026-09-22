@@ -15,6 +15,7 @@ interface Props {
 /** In-place editor for one dive record: discipline, dive time, depth, and notes. */
 export default function DiveEditForm({ session, onSave, onCancel }: Props) {
   const initDur = splitDur(session.durationSec)
+  const [date, setDate] = useState(session.date.slice(0, 10))
   const [discipline, setDiscipline] = useState<Discipline>(session.discipline)
   const [depth, setDepth] = useState(session.depth.toFixed(1))
   const [min, setMin] = useState(initDur.min)
@@ -22,11 +23,12 @@ export default function DiveEditForm({ session, onSave, onCancel }: Props) {
   const [comment, setComment] = useState(session.comment)
 
   const depthNum = parseDepth(depth)
-  const valid = depthNum !== null
+  const valid = depthNum !== null && !!date
 
   function save() {
-    if (depthNum === null) return
+    if (depthNum === null || !date) return
     onSave({
+      date,
       discipline,
       depth: depthNum,
       durationSec: joinDur(min, sec),
@@ -46,6 +48,17 @@ export default function DiveEditForm({ session, onSave, onCancel }: Props) {
             <IconCheck />
           </button>
         </div>
+      </div>
+
+      <div className="edit-field">
+        <label className="edit-label" htmlFor={`edit-date-${session.id}`}>Date</label>
+        <input
+          id={`edit-date-${session.id}`}
+          type="date"
+          className="input-glass"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
       </div>
 
       <div className="edit-field">

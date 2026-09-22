@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ApneaEndReason, ApneaSession, Posture, Sound } from '../data/types'
-import { splitDur, joinDur } from '../data/format'
+import { splitDur, joinDur, localDayKey, moveIsoToDay } from '../data/format'
 import { IconCheck, IconClose } from './icons'
 import DurationInput from './DurationInput'
 
@@ -29,6 +29,7 @@ interface Props {
 
 /** In-place editor for one apnea record. */
 export default function ApneaEditForm({ session, onSave, onCancel }: Props) {
+  const [day, setDay] = useState(() => localDayKey(new Date(session.date)))
   const [dur, setDur] = useState(() => splitDur(session.durationSec))
   const [contr, setContr] = useState(() => splitDur(session.contractionAtSec))
   const [strug, setStrug] = useState(() => splitDur(session.struggleAtSec))
@@ -38,11 +39,12 @@ export default function ApneaEditForm({ session, onSave, onCancel }: Props) {
   const [comment, setComment] = useState(session.comment)
 
   const durationSec = joinDur(dur.min, dur.sec)
-  const valid = durationSec !== null && durationSec > 0
+  const valid = durationSec !== null && durationSec > 0 && !!day
 
   function save() {
-    if (durationSec === null) return
+    if (durationSec === null || !day) return
     onSave({
+      date: moveIsoToDay(session.date, day),
       durationSec,
       contractionAtSec: joinDur(contr.min, contr.sec),
       struggleAtSec: joinDur(strug.min, strug.sec),
@@ -65,6 +67,17 @@ export default function ApneaEditForm({ session, onSave, onCancel }: Props) {
             <IconCheck />
           </button>
         </div>
+      </div>
+
+      <div className="edit-field">
+        <label className="edit-label" htmlFor={`edit-adate-${session.id}`}>Date</label>
+        <input
+          id={`edit-adate-${session.id}`}
+          type="date"
+          className="input-glass"
+          value={day}
+          onChange={(e) => setDay(e.target.value)}
+        />
       </div>
 
       <div className="edit-field">

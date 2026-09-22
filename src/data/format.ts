@@ -35,6 +35,23 @@ export function diveSpeed(depth: number, durationSec: number | null | undefined)
   return Math.round(((depth * 2) / durationSec) * 100) / 100
 }
 
+/** Local calendar day of a Date as "yyyy-mm-dd". */
+export function localDayKey(d: Date): string {
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
+/**
+ * Move an ISO datetime to another local calendar day ("yyyy-mm-dd"),
+ * keeping its time of day. Returns the original when the day text is invalid.
+ */
+export function moveIsoToDay(iso: string, day: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day)
+  if (!m) return iso
+  const d = new Date(iso)
+  d.setFullYear(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+  return d.toISOString()
+}
+
 /** Split seconds into { min, sec } strings for two-field editing ("" when null). */
 export function splitDur(sec: number | null | undefined): { min: string; sec: string } {
   if (sec == null) return { min: '', sec: '' }
